@@ -1,39 +1,40 @@
-import React, { Component, Fragment } from 'react'
+import React, { useEffect, Fragment, useContext } from 'react'
 import Spinner from './../layouts/Spinner'
-import PropTypes from 'prop-types'
 import {Link} from 'react-router-dom'
+import Repos  from './../repos/Repos'
+import GithubContext from './../../context/github/githubContext'
+const User = ({ match }) =>  {
 
-class User extends Component {
+   const githubContext  = useContext(GithubContext)
+   const { user , loading , getUser, getUserRepos} = githubContext // destructing 
 
-    componentDidMount() {
-        this.props.getUser(this.props.match.params.login)
-    }
+    useEffect(() => {
+        getUser(match.params.login)
+        getUserRepos(match.params.login)
+        //eslint-disable-next-line
+    }, []);
+    // const componentDidMount() {
+    //     this.props.getUser(tmatch.params.login)
+    //     this.props.getUserRepos(match.params.login)
+    // }
 
-    static propTypes  =  {
-        loading : PropTypes.bool.isRequired,
-        user:PropTypes.object.isRequired,
-        getUser: PropTypes.func.isRequired,
-    }
-    
+    const {
+        name, 
+        avatar_url, 
+        location,
+        bio,
+        html_url,
+        login,
+        company,
+        blog,
+        followers, 
+        following,
+        public_repos,
+        public_gists,
+        hireable,
+        
+    } = user
 
-    render() {
-        const {
-            name, 
-            avatar_url, 
-            location,
-            bio,
-            html_url,
-            login,
-            company,
-            blog,
-            followers, 
-            following,
-            public_repos,
-            public_gists,
-            hireable,
-        } = this.props.user
-
-        const { loading} = this.props;
 
         if(loading) return <Spinner />
 
@@ -88,10 +89,12 @@ class User extends Component {
                         <div className="badge badge-danlightger"> public repos: {public_repos}</div>
                         <div className="badge badge-dark"> public gists: {public_gists}</div>
                     </div>
+                
+                <Repos/>
             </Fragment>
-        )
-    }
+        );
 }
+
 
 export default User
   
